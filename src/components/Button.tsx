@@ -13,7 +13,7 @@ export function Button({ title, variant = "solid", ...rest }: ButtonProps) {
       bgColor={variant === "outline" ? "transparent" : "green.700"}
       borderWidth={variant === "outline" ? 1 : 0}
       borderColor="green.500"
-      rounded="sm"
+      rounded="md"
       _pressed={{
         bgColor: variant === "outline" ? "gray.500" : "green.500",
       }}
