@@ -37,13 +37,6 @@ export function Home() {
 
       <HStack>
         <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          _contentContainerStyle={{
-            px: 8,
-          }}
-          my={10}
-          maxH={10}
           data={muscleGroup}
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
@@ -55,6 +48,14 @@ export function Home() {
               onPress={() => setSelectedMuscleGroup(item)}
             />
           )}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          _contentContainerStyle={{
+            px: 8,
+          }}
+          my={10}
+          maxH={10}
+          minH={10}
         />
       </HStack>
 
