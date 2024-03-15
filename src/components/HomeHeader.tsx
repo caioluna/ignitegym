@@ -1,10 +1,9 @@
 import { TouchableOpacity } from "react-native";
-import { HStack, Heading, Text, VStack, Icon, useTheme } from "native-base";
+import { HStack, Heading, Text, VStack, Icon } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { UserPhoto } from "./UserPhoto";
 
 export function HomeHeader() {
-  const { fonts } = useTheme();
   return (
     <HStack bgColor="gray.600" pt={16} pb={5} px={8} alignItems="center">
       <UserPhoto
@@ -22,7 +21,7 @@ export function HomeHeader() {
           color="gray.100"
           fontSize="md"
           fontWeight="bold"
-          fontFamily={fonts.heading}
+          fontFamily="heading"
         >
           Caio
         </Heading>

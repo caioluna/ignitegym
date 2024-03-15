@@ -1,4 +1,4 @@
-import { FlatList, HStack, Heading, Text, VStack, useTheme } from "native-base";
+import { FlatList, HStack, Heading, Text, VStack } from "native-base";
 
 import { HomeHeader } from "@components/HomeHeader";
 import { MuscleGroup } from "@components/MuscleGroup";
@@ -20,8 +20,7 @@ export function Home() {
     "Levantamento terra",
     "Leg press",
   ]);
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
-  const { fonts } = useTheme();
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("costas");
 
   return (
     <VStack style={{ flex: 1 }}>
@@ -41,7 +40,9 @@ export function Home() {
           renderItem={({ item }) => (
             <MuscleGroup
               name={item}
-              isActive={selectedMuscleGroup === item}
+              isActive={
+                selectedMuscleGroup.toLowerCase() === item.toLowerCase()
+              }
               onPress={() => setSelectedMuscleGroup(item)}
             />
           )}
@@ -50,7 +51,7 @@ export function Home() {
 
       <VStack flex={1} px={8}>
         <HStack justifyContent="space-between" mb={5}>
-          <Heading color="gray.200" fontSize="md" fontFamily={fonts.heading}>
+          <Heading color="gray.200" fontSize="md" fontFamily="heading">
             Exercícios
           </Heading>
           <Text color="gray.200" fontSize="sm">
