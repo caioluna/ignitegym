@@ -1,6 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { Center, Heading, Image, Text, VStack, ScrollView } from "native-base";
 
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
+
 import BackgroundImg from "@assets/background.png";
 import LogoSVG from "@assets/logo.svg";
 
@@ -9,12 +13,42 @@ import { Button } from "@components/Button";
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
+type FormDataProps = {
+  email: string;
+  password: string;
+};
+
+const signInSchema = yup.object({
+  email: yup
+    .string()
+    .required("Insira o email")
+    .email("Formato de email inválido")
+    .matches(
+      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+      "Formato de email inválido"
+    ),
+  password: yup
+    .string()
+    .trim()
+    .required("Insira sua senha")
+    .min(6, "A senha tem no mínimo 6 dígitos"),
+});
+
 export function SignIn() {
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({
+    resolver: yupResolver(signInSchema),
+  });
 
   const handleGoToSignUp = () => {
     navigation.navigate("signUp");
   };
+
+  const handleSignIn = ({ email, password }: FormDataProps) => {};
 
   return (
     <ScrollView
@@ -50,14 +84,36 @@ export function SignIn() {
             Acesse sua conta
           </Heading>
 
-          <Input
-            placeholder="E-mail"
-            keyboardType="email-address"
-            autoCapitalize="none"
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="E-mail"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.email?.message}
+              />
+            )}
           />
-          <Input placeholder="Senha" secureTextEntry />
 
-          <Button title="Acessar" mt={8} />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Senha"
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.password?.message}
+              />
+            )}
+          />
+
+          <Button onPress={handleSubmit(handleSignIn)} title="Acessar" mt={8} />
         </Center>
 
         <Center mt={24}>
