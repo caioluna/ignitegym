@@ -1,5 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
-import { Center, Heading, Image, Text, VStack, ScrollView } from "native-base";
+import {
+  Center,
+  Heading,
+  Image,
+  Text,
+  VStack,
+  ScrollView,
+  useToast,
+} from "native-base";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,6 +20,9 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
+import { useAuth } from "@hooks/useAuth";
+import { AppError } from "@utils/AppError";
+import { useState } from "react";
 
 type FormDataProps = {
   email: string;
@@ -35,6 +46,9 @@ const signInSchema = yup.object({
 });
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+  const toast = useToast();
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const {
     control,
@@ -48,7 +62,24 @@ export function SignIn() {
     navigation.navigate("signUp");
   };
 
-  const handleSignIn = ({ email, password }: FormDataProps) => {};
+  const handleSignIn = async ({ email, password }: FormDataProps) => {
+    try {
+      setIsLoading(true);
+      await signIn(email, password);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível acessar. Tente novamente mais tarde.";
+
+      setIsLoading(false);
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
+  };
 
   return (
     <ScrollView
@@ -113,7 +144,12 @@ export function SignIn() {
             )}
           />
 
-          <Button onPress={handleSubmit(handleSignIn)} title="Acessar" mt={8} />
+          <Button
+            onPress={handleSubmit(handleSignIn)}
+            isLoading={isLoading}
+            title="Acessar"
+            mt={8}
+          />
         </Center>
 
         <Center mt={24}>

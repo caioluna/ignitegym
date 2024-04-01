@@ -1,5 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
-import { Center, Heading, Image, Text, VStack, ScrollView } from "native-base";
+import {
+  Center,
+  Heading,
+  Image,
+  Text,
+  VStack,
+  ScrollView,
+  useToast,
+} from "native-base";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,6 +17,10 @@ import LogoSVG from "@assets/logo.svg";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { api } from "@services/api";
+import axios from "axios";
+import { Alert } from "react-native";
+import { AppError } from "@utils/AppError";
 
 type FormDataProps = {
   name: string;
@@ -40,6 +52,7 @@ const signUpSchema = yup.object({
 });
 
 export function SignUp() {
+  const toast = useToast();
   const navigation = useNavigation();
   const {
     control,
@@ -53,12 +66,32 @@ export function SignUp() {
     navigation.goBack();
   };
 
-  const handleSignUp = ({
-    email,
-    name,
-    password,
-    password_confirm,
-  }: FormDataProps) => {};
+  const handleSignUp = async ({ email, name, password }: FormDataProps) => {
+    // const response = await fetch("http://192.168.15.145:3333/users", {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ name, email, password }),
+    // });
+    try {
+      const response = await api.post("/users", { email, name, password });
+
+      console.log(response.data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível criar a conta. Tente novamente mais tarde.";
+
+      return toast.show({
+        title: title,
+        placement: "bottom",
+        bgColor: "red.500",
+      });
+    }
+  };
 
   return (
     <ScrollView
